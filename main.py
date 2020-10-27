@@ -14,7 +14,7 @@ mongo_destination = database.conn_mongodb(MONGO_URI_DESTINATION, MONGO_DESTINATI
 
 def start():
     cursor = mongo_source[MONGO_SOURCE_COLLECTION]
-    results = database.collection_iterator(cursor, limit=1000)
+    results = database.collection_iterator(cursor, limit=500)
     for item in results:
         migrate_records(item)
     
