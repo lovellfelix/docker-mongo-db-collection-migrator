@@ -1,0 +1,31 @@
+.git
+Dockerfile
+.DS_Store
+.gitignore
+.dockerignore
+.vscode
+.coverage
+*.swp
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+
+# C extensions
+*.so
+# Scrapy stuff:
+.scrapy
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+test.py

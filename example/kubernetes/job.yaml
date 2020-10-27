@@ -1,0 +1,28 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: mongo-col-migrator
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongo-col-migrator
+            image: lovellfelix/mongo-col-migrator
+            env:
+              - name: MONGO_URI_SOURCE
+                value: "mongodb+srv://user@pass:hostname/source?retryWrites=true&w=majority" 
+              - name: MONGO_SOURCE_DATABASE
+                value: source
+              - name: MONGO_SOURCE_Collection
+                value: "collection_a"
+              - name: MONGO_URI_DESTINATION
+                value: "mongodb+srv://user@pass:hostname/destination?retryWrites=true&w=majority" 
+              - name: MONGO_DESTINATION_DATABASE
+                value: "destination"
+              - name: MONGO_DESTINATION_Collection
+                value: "collection_b"
+          restartPolicy: OnFailure
