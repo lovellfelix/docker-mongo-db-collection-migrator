@@ -14,19 +14,19 @@ mongo_destination = database.conn_mongodb(MONGO_URI_DESTINATION, MONGO_DESTINATI
 
 def start():
     cursor = mongo_source[MONGO_SOURCE_COLLECTION]
-    results = database.collection_iterator(cursor, limit=500)
+    results = collection_iterator(cursor, limit=500)
     for item in results:
         migrate_records(item)
     
 def records_count():
-    return database.count(mongo_source[MONGO_SOURCE_COLLECTION], None)
+    return database.count(mongo_source[MONGO_SOURCE_COLLECTION])
 
 def migrate_records(item):
     _id = item["_id"]
     if database.ifExist(mongo_destination[MONGO_DESTINATION_COLLECTION], _id):
        logger.debug("%s Already exist. Deleting..." %_id)
        try:
-           database.delete(mongo_source[MONGO_SOURCE_COLLECTION], _id, None)
+           database.delete(mongo_source[MONGO_SOURCE_COLLECTION], _id)
        except Exception as e:
             logger.error("Cleanup failed: %s" %e)
     else:
@@ -34,12 +34,29 @@ def migrate_records(item):
             result = database.insert(mongo_destination[MONGO_DESTINATION_COLLECTION], item, None)
             if result:
                 try:
-                    database.delete(mongo_source[MONGO_SOURCE_COLLECTION], result, None)
+                    database.delete(mongo_source[MONGO_SOURCE_COLLECTION], result)
                 except Exception as e:
                     logger.error("Cleanup failed: %s" %e)
             logger.info("%s Successfully migrated" % str(result))
         except Exception as e:
             logger.error("Migration failed: %s" % e)
+
+def collection_iterator(cursor, limit=1000):
+        total_records = database.count(cursor)
+        while True:
+            try:
+                results = database.find(cursor).limit(limit)
+                print(total_records)
+                if total_records <= 0:
+                    count = database.count(cursor)
+                    if count == 0:
+                        break
+            except Exception as e:
+                logger.error(e)
+                break
+            for result in results:
+                yield result
+            total_records -= limit 
 
 def main():
     start()

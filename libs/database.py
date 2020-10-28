@@ -7,7 +7,7 @@ from bson import ObjectId
 def conn_mongodb(uri, database):
     return MongoClient(uri)[database]        
 
-def find(mongo_collection, fltr):
+def find(mongo_collection, fltr=None):
     if fltr is None:
         return mongo_collection.find()
     else:
@@ -16,7 +16,7 @@ def find(mongo_collection, fltr):
 def findById(mongo_collection, document_id):
     return mongo_collection.find_one({'_id': ObjectId(document_id)})
 
-def insert(mongo_collection, data, bulk):
+def insert(mongo_collection, data, bulk=None):
     if bulk:
         return mongo_collection.insert_many(data).inserted_id
     else:
@@ -28,7 +28,7 @@ def update(mongo_collection, fltr, data):
 def updateById(mongo_collection, document_id, data):
     return mongo_collection.update_one({'_id': ObjectId(document_id)}, data)
 
-def delete(mongo_collection, document_id, bulk):
+def delete(mongo_collection, document_id, bulk=None):
     if bulk:
         return mongo_collection.delete_many(document_id)
     else:
@@ -40,21 +40,9 @@ def ifExist(mongo_collection, document_id):
     else:
         return False
 
-def count(mongo_collection, fltr):
+def count(mongo_collection, fltr=None):
     """Find data return values"""
     if fltr is None:
         return mongo_collection.count_documents({})
     else:
         return mongo_collection.count_documents(fltr)
-
-def collection_iterator(cursor, limit=1000):
-        skip = 0
-        while True:
-            results = find(cursor, None).skip(skip).limit(limit)
-            try:
-                results.next()
-            except StopIteration:
-                break
-            for result in results:
-                yield result
-            skip += limit
