@@ -12,5 +12,5 @@ docker run -ti  \
     -e MONGO_URI_DESTINATION="mongodb+srv://user@pass:hostname/destination?retryWrites=true&w=majority" \
     -e MONGO_DESTINATION_DATABASE="destination" \
     -e MONGO_DESTINATION_COLLECTION="collection_b" \
-    lovellfelix/mongo-col-migrator
+    lovellfelix/mongo-col-migrato:v1.2.1
 ```
