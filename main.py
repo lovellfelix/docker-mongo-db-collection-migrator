@@ -46,10 +46,10 @@ def collection_iterator(cursor, limit=1000):
         while True:
             try:
                 results = database.find(cursor).limit(limit)
-                print(total_records)
                 if total_records <= 0:
                     count = database.count(cursor)
                     if count == 0:
+                        logger.info("🚀 Migration completed")
                         break
             except Exception as e:
                 logger.error(e)
