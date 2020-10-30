@@ -39,7 +39,7 @@ def migrate_records(item):
             if result and DELETE_SOURCE:
                 try:
                     database.delete(mongo_source[MONGO_SOURCE_COLLECTION], result)
-                    logger.info("Deleted: %s" %_id)
+                    logger.debug("Deleted: %s" %_id)
                 except Exception as e:
                     logger.error("Cleanup failed: %s" %e)
             logger.info("Migrated: %s " % str(result))
