@@ -1,10 +1,10 @@
 import logging
 import libs.database as database
 
-from libs.config import MONGO_URI_DESTINATION, MONGO_DESTINATION_DATABASE, MONGO_DESTINATION_COLLECTION, MONGO_URI_SOURCE, MONGO_SOURCE_DATABASE, MONGO_SOURCE_COLLECTION
+from libs.config import DELETE_SOURCE, MONGO_URI_DESTINATION, MONGO_DESTINATION_DATABASE, MONGO_DESTINATION_COLLECTION, MONGO_URI_SOURCE, MONGO_SOURCE_DATABASE, MONGO_SOURCE_COLLECTION
 
 logger = logging.getLogger('consumer')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)-8s %(message)s'))
 logger.addHandler(handler)
@@ -24,20 +24,26 @@ def records_count():
 def migrate_records(item):
     _id = item["_id"]
     if database.ifExist(mongo_destination[MONGO_DESTINATION_COLLECTION], _id):
-       logger.debug("%s Already exist. Deleting..." %_id)
+       logger.debug("%s already exist" %_id)
        try:
-           database.delete(mongo_source[MONGO_SOURCE_COLLECTION], _id)
+           if DELETE_SOURCE:
+            database.delete(mongo_source[MONGO_SOURCE_COLLECTION], _id)
+            logger.info("Deleted: %s" %_id)
+           else:
+               logger.info("Skip: %s" %_id)
        except Exception as e:
             logger.error("Cleanup failed: %s" %e)
     else:
         try: 
             result = database.insert(mongo_destination[MONGO_DESTINATION_COLLECTION], item, None)
-            if result:
+            if result and DELETE_SOURCE:
+                logger.info(DELETE_SOURCE)
                 try:
+                    logger.info("delete source")
                     database.delete(mongo_source[MONGO_SOURCE_COLLECTION], result)
                 except Exception as e:
                     logger.error("Cleanup failed: %s" %e)
-            logger.info("%s Successfully migrated" % str(result))
+            logger.info("Migrated: %s " % str(result))
         except Exception as e:
             logger.error("Migration failed: %s" % e)
 
