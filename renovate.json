@@ -1,4 +1,13 @@
 {
+  "enabled": true,
+  "timezone": "America/New_York",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+  "commitMessageSuffix": "[ci-skip]",
+  "commitBody": "Signed-off-by: Lovell Felix <lovellfelix@users.noreply.github.com>",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "rebaseWhen": "conflicted",
+  "assignees": ["@lovellfelix"],
   "extends": [
     "config:base"
   ]
