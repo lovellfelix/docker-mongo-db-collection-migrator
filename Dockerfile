@@ -1,5 +1,5 @@
 # Base docker image
-FROM python:3.6-alpine
+FROM python:3.14-alpine
        
 ADD . /src
 
